@@ -48,11 +48,18 @@
         max-height: 100px;
     }
     </style>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/1.3.5/ZeroClipboard.min.js"></script>
     <script>
     window.onload = function () {
         var imgArea = document.querySelector('.img-area');
         var codeList = document.querySelector(".code-list");
         var imgAreaTip = ['将图片拖拽至此', '释放生成DataURL', '处理中...'];
+
+        ZeroClipboard.config({
+            moviePath: "//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/1.3.5/ZeroClipboard.swf",
+            hoverClass: "show",
+            trustedDomains: ['*']
+        })
 
         function dragInit () {
             imgArea.addEventListener('dragenter', dragEnterHandle, false);
@@ -80,6 +87,7 @@
                     imgAreaStatue(0);
                     itemStatue(idx, this.readyState);
                     t.reader = null;
+                    readerCallback(codeList.children[idx].querySelector(".copy"));
                 };
                 t.reader.onloadstart = function () {
                     itemStatue(idx, this.readyState);
@@ -106,6 +114,25 @@
 
         function itemStatue (idx, statue) {
             codeList.children[idx].querySelector(".statue").innerText = statue;
+        }
+
+        function readerCallback (btn) {
+            var copy = new ZeroClipboard(btn);
+            copy.on('load', function(client) {
+                client.on('datarequested', function(client) {
+                    client.setText(this.previousSibling.value);
+                });
+                client.on('complete', function(client, args) {
+                    var t = this;
+                    t.innerText = "复制成功";
+                    setTimeout(function () {
+                        t.innerText = "复制";
+                    }, 3000);
+                });
+            });
+            copy.on('wrongflash noflash', function() {
+                ZeroClipboard.destroy();
+            });
         }
         dragInit();
     };
