@@ -14,7 +14,14 @@
 		position: relative;
 		z-index: 100;
 	}
+	ul li, ol li{
+		list-style: none;
+	}
 	/*------------page----------------*/
+	.wrap{
+		width: 500px;
+		margin: 0 auto;
+	}
 	.img-area{
 		width: 300px;
 		height: 300px;
@@ -32,57 +39,85 @@
 		font-size: 30px;
 		color: #ddd;
 	}
-	.code-area{
-		width: 500px;
+	.code-list{
 		margin: 20px auto 0;
 		display: block;
-		background-color: #0ca;
-		overflow-y: scroll;
+	}
+	.code-list li img{
+		max-width: 100px;
+		max-height: 100px;
 	}
 	</style>
 	<script>
 	window.onload = function () {
 		var imgArea = document.querySelector('.img-area');
-		var imgAreaTip = imgArea.children[0];
-		var codeArea = document.querySelector('.code-area');
-		var result = {};
+		var codeList = document.querySelector(".code-list");
+		var imgAreaTip = ['将图片拖拽至此', '释放生成DataURL', '处理中...'];
 
 		function dragInit () {
-			imgArea.addEventListener('dragenter', handleDragEnter, false);
-			imgArea.addEventListener('dragover', handleDragEnter, false);
-			imgArea.addEventListener('dragleave', handleDragLeave, false);
-			imgArea.addEventListener('drop', handleDrop, false);
+			imgArea.addEventListener('dragenter', dragEnterHandle, false);
+			imgArea.addEventListener('dragover', dragEnterHandle, false);
+			imgArea.addEventListener('dragleave', dragLeaveHandle, false);
+			imgArea.addEventListener('drop', dropHandle, false);
 		}
-		function handleDragEnter (e) {
+		function dragEnterHandle (e) {
 			e.preventDefault();
-			imgAreaTip.innerText = "释放生成DataURL";
+			if(e.dataTransfer.files.length > 0){
+				imgAreaStatue(1);
+			}
 		}
-		function handleDragLeave () {
-			imgAreaTip.innerText = "将图片拖拽至此";
+		function dragLeaveHandle () {
+			imgAreaStatue(0);
 		}
-		function handleDrop (e) {
+		function dropHandle (e) {
 			e.preventDefault();
-			imgAreaTip.innerText = "处理中...";
-			result = {};
 			var files = Array.prototype.slice.call(e.dataTransfer.files);
-			var reader = new FileReader();
-			files.forEach(function (t) {
-				reader.onload = function(event) {
-					result[t.name] = event.target.result;
-					codeArea.innerText = event.target.result;
-					imgAreaTip.innerText = "将图片拖拽至此";
+			files.forEach(function (t, idx) {
+				t.reader = new FileReader();
+				t.reader.onload = function() {
+					codeList.children[idx].querySelector(".img").src = this.result;
+					codeList.children[idx].querySelector(".code").innerHTML = this.result;
+					imgAreaStatue(0);
+					itemStatue(idx, this.readyState);
+					t.reader = null;
 				};
-				reader.readAsDataURL(t);
+				t.reader.onloadstart = function () {
+					itemStatue(idx, this.readyState);
+				}
+				if(t.type.indexOf('image') != -1){
+					codeList.innerHTML = '<li>' +
+						'<img alt="img" class="img">' +
+						'<span class="statue">ready</span>' +
+						'<textarea cols="30" rows="1" class="code"></textarea>' +
+						'<button class="copy">复制</button>' +
+					'</li>' + codeList.innerHTML;
+					t.reader.readAsDataURL(t);
+				}
+				else{
+					imgAreaStatue(0);
+				}
 			});
+		}
+
+		function imgAreaStatue (statue) {
+			tipTag = imgArea.children[0];
+			tipTag.innerText = imgAreaTip[statue];
+		}
+
+		function itemStatue (idx, statue) {
+			codeList.children[idx].querySelector(".statue").innerText = statue;
 		}
 		dragInit();
 	};
 	</script>
 </head>
 <body>
-	<div class="img-area">
-		<p>将图片拖拽至此</p>
+	<div class="wrap">
+		<div class="img-area">
+			<p>将图片拖拽至此</p>
+		</div>
+		<p>结果列表：</p>
+		<ul class="code-list"></ul>
 	</div>
-	<textarea cols="30" rows="10" class="code-area"></textarea>
 </body>
 </html>
