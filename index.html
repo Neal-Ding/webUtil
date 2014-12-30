@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Webutil : 自用小工具集">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Webutil</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jfw10973/webUtil">View on GitHub</a>
+
+          <h1 id="project_title">Webutil</h1>
+          <h2 id="project_tagline">自用小工具集</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jfw10973/webUtil/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jfw10973/webUtil/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <pre><code>&lt;style&gt;
+/*------------base----------------*/
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    font: 16px/100% "Microsoft Yahei", Arial, Helvetica, sans-serif;
+    position: relative;
+    z-index: 100;
+}
+ul li, ol li{
+    list-style: none;
+}
+/*------------page----------------*/
+.wrap{
+    width: 500px;
+    margin: 0 auto;
+}
+.img-area{
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+    border: 5px dashed #aaa;
+    border-radius: 28px;
+}
+.img-area p{
+    width: 100%;
+    height: 100%;
+    background-color: #aaa;
+    border-radius: 22px;
+    text-align: center;
+    line-height: 300px;
+    font-size: 30px;
+    color: #ddd;
+}
+.code-list{
+    margin: 20px auto 0;
+    display: block;
+}
+.code-list li img{
+    max-width: 100px;
+    max-height: 100px;
+}
+&lt;/style&gt;
+&lt;script&gt;
+window.onload = function () {
+    var imgArea = document.querySelector('.img-area');
+    var codeList = document.querySelector(".code-list");
+    var imgAreaTip = ['将图片拖拽至此', '释放生成DataURL', '处理中...'];
+    function dragInit () {
+        imgArea.addEventListener('dragenter', dragEnterHandle, false);
+        imgArea.addEventListener('dragover', dragEnterHandle, false);
+        imgArea.addEventListener('dragleave', dragLeaveHandle, false);
+        imgArea.addEventListener('drop', dropHandle, false);
+    }
+    function dragEnterHandle (e) {
+        e.preventDefault();
+        if(e.dataTransfer.files.length &gt; 0){
+            imgAreaStatue(1);
+        }
+    }
+    function dragLeaveHandle () {
+        imgAreaStatue(0);
+    }
+    function dropHandle (e) {
+        e.preventDefault();
+        var files = Array.prototype.slice.call(e.dataTransfer.files);
+        files.forEach(function (t, idx) {
+            t.reader = new FileReader();
+            t.reader.onload = function() {
+                codeList.children[idx].querySelector(".img").src = this.result;
+                codeList.children[idx].querySelector(".code").innerHTML = this.result;
+                imgAreaStatue(0);
+                itemStatue(idx, this.readyState);
+                t.reader = null;
+            };
+            t.reader.onloadstart = function () {
+                itemStatue(idx, this.readyState);
+            }
+            if(t.type.indexOf('image') != -1){
+                codeList.innerHTML = '&lt;li&gt;' +
+                    '&lt;img alt="img" class="img"&gt;' +
+                    '&lt;span class="statue"&gt;ready&lt;/span&gt;' +
+                    '&lt;textarea cols="30" rows="1" class="code"&gt;&lt;/textarea&gt;' +
+                    '&lt;button class="copy"&gt;复制&lt;/button&gt;' +
+                '&lt;/li&gt;' + codeList.innerHTML;
+                t.reader.readAsDataURL(t);
+            }
+            else{
+                imgAreaStatue(0);
+            }
+        });
+    }
+    function imgAreaStatue (statue) {
+        tipTag = imgArea.children[0];
+        tipTag.innerText = imgAreaTip[statue];
+    }
+    function itemStatue (idx, statue) {
+        codeList.children[idx].querySelector(".statue").innerText = statue;
+    }
+    dragInit();
+};
+&lt;/script&gt;
+&lt;div class="wrap"&gt;
+    &lt;div class="img-area"&gt;
+        &lt;p&gt;将图片拖拽至此&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;p&gt;结果列表：&lt;/p&gt;
+    &lt;ul class="code-list"&gt;&lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Webutil maintained by <a href="https://github.com/jfw10973">jfw10973</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
