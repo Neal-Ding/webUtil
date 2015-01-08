@@ -43,6 +43,22 @@
         margin: 20px auto 0;
         display: block;
     }
+    .code-list li{
+        height: 100px;
+    }
+    .code-list li > *{
+        vertical-align: middle;
+    }
+    .code-list li .copy{
+        padding: 10px;
+        margin: 0 0 0 20px;
+    }
+    .code-list li .code{
+        height: 100px;
+    }
+    .code-list li .statue{
+        padding: 0 5px;
+    }
     .code-list li img{
         max-width: 100px;
         max-height: 100px;
@@ -59,7 +75,7 @@
             moviePath: "//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/1.3.5/ZeroClipboard.swf",
             hoverClass: "show",
             trustedDomains: ['*']
-        })
+        });
 
         function dragInit () {
             imgArea.addEventListener('dragenter', dragEnterHandle, false);
@@ -95,9 +111,9 @@
                 if(t.type.indexOf('image') != -1){
                     codeList.innerHTML = '<li>' +
                         '<img alt="img" class="img">' +
-                        '<span class="statue">ready</span>' +
+                        '<span class="statue">未加载</span>' +
                         '<textarea cols="30" rows="1" class="code"></textarea>' +
-                        '<button class="copy">复制</button>' +
+                        '<button class="copy">复制代码</button>' +
                     '</li>' + codeList.innerHTML;
                     t.reader.readAsDataURL(t);
                 }
@@ -113,7 +129,8 @@
         }
 
         function itemStatue (idx, statue) {
-            codeList.children[idx].querySelector(".statue").innerText = statue;
+            var statueList = ['未加载', '处理中', '已完成'];
+            codeList.children[idx].querySelector(".statue").innerText = statueList[statue];
         }
 
         function readerCallback (btn) {
@@ -126,7 +143,7 @@
                     var t = this;
                     t.innerText = "复制成功";
                     setTimeout(function () {
-                        t.innerText = "复制";
+                        t.innerText = "复制代码";
                     }, 3000);
                 });
             });
