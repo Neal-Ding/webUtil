@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Pure CSS Counter</title>
+	<style>
+	body{
+		counter-reset: num ser ser-sub;
+	}
+	input[type="checkbox"]:checked{
+		counter-increment: num;
+	}
+	p.title{
+		counter-increment: ser;
+	}
+	p.content{
+		counter-increment: ser-sub;
+	}
+	p.title:before{
+		content: counter(ser) ".";
+	}
+	p.content:before{
+		content: counter(ser)"."counter(ser-sub) ".";
+	}
+	#score:after{
+		content: counter(num);
+	}
+
+	</style>
+</head>
+<body>
+	<h1>Pure CSS Counter</h1>
+	<p class="title">title</p>
+	<p class="content">content</p>
+	<p class="content">content</p>
+	<p class="content">content</p>
+	<p class="title">title</p>
+	<p class="content">content</p>
+	<p class="content">content</p>
+	<p class="content">content</p>
+	<label>click +1<input type="checkbox"></label>
+	<label>click +1<input type="checkbox"></label>
+	<label>click +1<input type="checkbox"></label>
+	<label>click +1<input type="checkbox"></label>
+	<label>click +1<input type="checkbox"></label>
+	<label>click +1<input type="checkbox"></label>
+	<div id="score">score</div>
+</body>
+</html>
