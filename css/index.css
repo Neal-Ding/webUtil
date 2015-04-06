@@ -1,0 +1,82 @@
+/*------------page----------------*/
+.wrap{
+    width: 500px;
+    margin: 0 auto;
+}
+h1.title{
+    text-align: center;
+    font-size: 30px;
+    margin: 30px 0;
+}
+.img-area{
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 30px;
+    border: 5px dashed #aaa;
+    border-radius: 28px;
+}
+.img-area p{
+    width: 100%;
+    height: 100%;
+    background-color: #aaa;
+    border-radius: 22px;
+    text-align: center;
+    line-height: 300px;
+    font-size: 30px;
+    color: #ddd;
+}
+.code-list{
+    margin: 20px auto 0;
+    display: block;
+    overflow: hidden;
+}
+.code-list li{
+    height: 100px;
+    width: 100px;
+    display: block;
+    float: left;
+    position: relative;
+}
+.code-list li .copy{
+    display: none;
+    padding: 7px 10px;
+    position: absolute;
+    width: 80px;
+    left: 10px;
+    bottom: 10px;
+}
+.code-list li img:hover + .copy{
+    display: block;
+}
+.code-list li .copy:hover{
+    display: block;
+}
+.code-list li .status{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.3);
+    transition: height 0.2s;
+}
+.code-list li img{
+    width: 100px;
+    height: 100px;
+}
+.tipMsg{
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    color: #fff;
+    font-size: 1em;
+    transition: margin 0.5s;
+    margin: -50px 0 0 0;
+    top: 0;
+    left: 0;
+}
+.status-hover{
+    display: block !important;
+}
