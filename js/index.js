@@ -20,7 +20,7 @@ global.drag = {
         var t = this;
 
         ZeroClipboard.config({
-            moviePath: 'img/ZeroClipboard.swf',
+            moviePath: 'js/ZeroClipboard.swf',
             handCursorEnabled: true,
             hoverClass: 'status-hover',
             trustedDomains: ['*']
