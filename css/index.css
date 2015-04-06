@@ -46,10 +46,10 @@ h1.title{
     bottom: 10px;
 }
 .code-list li img:hover + .copy{
-    opacity: 1;;
+    opacity: 1;
 }
-.code-list li .copy:hover{
-    opacity: 1;;
+.status-hover{
+    opacity: 1 !important;
 }
 .code-list li .status{
     position: absolute;
@@ -76,7 +76,4 @@ h1.title{
     margin: -50px 0 0 0;
     top: 0;
     left: 0;
-}
-.status-hover{
-    display: block !important;
 }
