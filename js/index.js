@@ -63,7 +63,7 @@ global.drag = {
                 var item = document.createElement('li');
                 item.innerHTML = 
                 '<img alt="img" class="img">' +
-                '<button class="copy">复制代码</button>' +
+                '<button class="copy">复制编码</button>' +
                 '<span class="status"></span>';
                 docfrag.appendChild(item);
 
