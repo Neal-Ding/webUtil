@@ -1,5 +1,5 @@
 //全局公用逻辑
-var global = {
+var G = {
     share: {
         showTipMsg: function (text, status) {
             var tipMsg = document.querySelector('.tipMsg'),
@@ -15,7 +15,7 @@ var global = {
 };
 
 //处理拖拽逻辑
-global.drag = {
+G.drag = {
     init: function (imgArea) {
         var t = this;
 
@@ -38,7 +38,7 @@ global.drag = {
         t.imgArea.addEventListener('drop', t.dropHandle, false);
     },
     dragEnterHandle: function (e) {
-        var w = global.drag;
+        var w = G.drag;
 
         e.preventDefault();
         if(e.dataTransfer.files.length > 0){
@@ -46,7 +46,7 @@ global.drag = {
         }
     },
     dragLeaveHandle: function (e) {
-        var w = global.drag;
+        var w = G.drag;
 
         e.preventDefault();
         w.setAreaStatus(0);
@@ -55,19 +55,20 @@ global.drag = {
         var files = Array.prototype.slice.call(e.dataTransfer.files),
             codeList = document.querySelector('.code-list'),
             docfrag = document.createDocumentFragment(),
-            w = global.drag;
+            w = G.drag;
 
         e.preventDefault();
+        w.setAreaStatus(2);
         files.forEach(function (t) {
             if(t.type.indexOf('image') != -1){
                 var item = document.createElement('li');
-                item.innerHTML = 
+                item.innerHTML =
                 '<img alt="img" class="img">' +
                 '<button class="copy">复制编码</button>' +
                 '<span class="status"></span>';
                 docfrag.appendChild(item);
 
-                global.reader.init(t, item);
+                G.reader.init(t, item);
             }
         });
         codeList.appendChild(docfrag);
@@ -76,7 +77,7 @@ global.drag = {
     },
     setAreaStatus: function (status) {
         var tipArr = ['将图片拖拽至此', '释放生成DataURL', '处理中...'],
-            w = global.drag;
+            w = G.drag;
 
         w.imgArea.children[0].innerText = tipArr[status];
     },
@@ -87,7 +88,7 @@ global.drag = {
                 client.setText(this.previousSibling.src);
             });
             client.on('complete', function() {
-                global.share.showTipMsg('复制成功', 2);
+                G.share.showTipMsg('复制成功', 2);
             });
         });
         copy.on('wrongflash noflash', function() {
@@ -97,7 +98,7 @@ global.drag = {
 };
 
 //读取数据逻辑
-global.reader = {
+G.reader = {
     init: function (file, itemNode) {
         var t = this;
 
@@ -117,13 +118,13 @@ global.reader = {
     },
     onloadStart: function () {
         var t = this,
-            w = global.reader;
+            w = G.reader;
 
         w.setStatus(t.itemNode, 1);
     },
     onload: function () {
         var t = this,
-            w = global.reader;
+            w = G.reader;
 
         t.itemNode.querySelector('.img').src = t.result;
         w.setStatus(t.itemNode, 2);
@@ -140,5 +141,5 @@ window.onload = function () {
     // base64切割输出带进度，保证大图不卡，BUT 切割后无法组装回DataURL，目前无解
     var imgArea = document.querySelector('.img-area');
 
-    global.drag.init(imgArea);
+    G.drag.init(imgArea);
 };
