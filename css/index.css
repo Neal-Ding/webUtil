@@ -63,16 +63,3 @@ h1.title{
     width: 100px;
     height: 100px;
 }
-.tipMsg{
-    position: fixed;
-    width: 100%;
-    text-align: center;
-    height: 50px;
-    line-height: 50px;
-    color: #fff;
-    font-size: 1em;
-    transition: margin 0.5s;
-    margin: -50px 0 0 0;
-    top: 0;
-    left: 0;
-}

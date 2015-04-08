@@ -1,0 +1,51 @@
+/*------------base----------------*/
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    font: 16px/100% "Microsoft Yahei", Arial, Helvetica, sans-serif;
+    position: relative;
+    z-index: 100;
+}
+img{
+	max-width: 100%;
+	vertical-align: middle;
+}
+ul li, ol li{
+    list-style: none;
+}
+table{
+	border-collapse: collapse;
+}
+h1, h2, h3, h4, h5, h6{
+	font-size: 16px;
+	line-height: 1em;
+}
+/*------------global----------------*/
+.G-tipMsg{
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    color: #fff;
+    font-size: 1em;
+    background-color: #fff;
+    transition: margin 0.5s;
+    margin: -50px 0 0 0;
+    top: 0;
+    left: 0;
+}
+.G-tipMsg.error{
+    background-color: red;
+}
+.G-tipMsg.warn{
+    background-color: orange;
+}
+.G-tipMsg.pass{
+    background-color: green;
+}
+.G-tipMsg.show{
+    margin: 0;
+}
