@@ -39,10 +39,9 @@ h1.title{
 }
 .code-list li .copy{
     opacity: 0.7;
-    padding: 7px 10px;
+    padding: 5px 7px;
     position: absolute;
-    width: 80px;
-    left: 10px;
+    left: 15px;
     bottom: 10px;
 }
 .code-list li img:hover + .copy{

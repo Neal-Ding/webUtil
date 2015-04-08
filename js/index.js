@@ -1,5 +1,13 @@
 //全局公用逻辑
 var G = {
+    ns: function (str) {
+        var arr = str.split("."),
+            w = window;
+
+        for (var i = 0; i < arr.length; i++) {
+            w = w[arr[i]] = {};
+        }
+    },
     share: {
         showTipMsg: function (text, status) {
             var tipMsg = document.querySelector('.tipMsg'),
