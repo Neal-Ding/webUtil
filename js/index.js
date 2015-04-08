@@ -1,22 +1,49 @@
 //全局公用逻辑
 var G = {
-    ns: function (str) {
+    ns: function (str, overWritten) {
         var arr = str.split("."),
             w = window;
 
         for (var i = 0; i < arr.length; i++) {
-            w = w[arr[i]] = {};
+            if(w[arr[i]] === undefined || overWritten){
+                w[arr[i]] = {};
+            }
+            else {
+                console.log(JSON.stringify(w[arr[i]]) + " will be overWritten");
+                break;
+            }
+            w = w[arr[i]];
         }
     },
     share: {
-        showTipMsg: function (text, status) {
-            var tipMsg = document.querySelector('.tipMsg'),
-                bgColor = ['red', 'orange', 'green'];
-            tipMsg.style.backgroundColor = bgColor[status || 1];
-            tipMsg.style.margin = '0';
+        showPassTip: function (text) {
+            var t = this;
+            t._showTip(text, 0);
+        },
+        showWarnTip: function (text) {
+            var t = this;
+            t._showTip(text, 1);
+        },
+        showErrorTip: function (text) {
+            var t = this;
+            t._showTip(text, 2);
+        },
+        _showTip: function (text, status) {
+            var tipMsg = document.querySelector('.G-tipMsg'),
+                statusArr = ['pass', 'warn', 'error'];
+
+            if(!tipMsg){
+                tipMsg = document.createElement("div");
+                tipMsg.className = 'G-tipMsg';
+                document.body.appendChild(tipMsg);
+            }
             tipMsg.innerText = text || '';
+            DOMTokenList.prototype.remove.apply(tipMsg.classList, statusArr);
             setTimeout(function () {
-                tipMsg.style.margin = '-50px 0 0 0';
+                tipMsg.classList.add(statusArr[status], 'show');
+            }, 0);
+            setTimeout(function () {
+                tipMsg.classList.remove('show');
             }, 1000);
         }
     }
@@ -24,7 +51,7 @@ var G = {
 
 //处理拖拽逻辑
 G.drag = {
-    init: function (imgArea) {
+    init: function (req, res) {
         var t = this;
 
         ZeroClipboard.config({
@@ -34,16 +61,17 @@ G.drag = {
             trustedDomains: ['*']
         });
 
-        t.imgArea = imgArea;
+        t.req = req;
+        t.res = res;
         t.eventHandle();
     },
     eventHandle: function () {
         var t = this;
 
-        t.imgArea.addEventListener('dragenter', t.dragEnterHandle, false);
-        t.imgArea.addEventListener('dragover', t.dragEnterHandle, false);
-        t.imgArea.addEventListener('dragleave', t.dragLeaveHandle, false);
-        t.imgArea.addEventListener('drop', t.dropHandle, false);
+        t.req.addEventListener('dragenter', t.dragEnterHandle, false);
+        t.req.addEventListener('dragover', t.dragEnterHandle, false);
+        t.req.addEventListener('dragleave', t.dragLeaveHandle, false);
+        t.req.addEventListener('drop', t.dropHandle, false);
     },
     dragEnterHandle: function (e) {
         var w = G.drag;
@@ -61,7 +89,6 @@ G.drag = {
     },
     dropHandle: function (e) {
         var files = Array.prototype.slice.call(e.dataTransfer.files),
-            codeList = document.querySelector('.code-list'),
             docfrag = document.createDocumentFragment(),
             w = G.drag;
 
@@ -79,7 +106,7 @@ G.drag = {
                 G.reader.init(t, item);
             }
         });
-        codeList.appendChild(docfrag);
+        w.res.appendChild(docfrag);
         w.setClipBoard(document.querySelectorAll('.copy'));
         w.setAreaStatus(0);
     },
@@ -87,7 +114,7 @@ G.drag = {
         var tipArr = ['将图片拖拽至此', '释放生成DataURL', '处理中...'],
             w = G.drag;
 
-        w.imgArea.children[0].innerText = tipArr[status];
+        w.req.children[0].innerText = tipArr[status];
     },
     setClipBoard: function (btn) {
         var copy = new ZeroClipboard(btn);
@@ -96,7 +123,7 @@ G.drag = {
                 client.setText(this.previousSibling.src);
             });
             client.on('complete', function() {
-                G.share.showTipMsg('复制成功', 2);
+                G.share.showPassTip('复制成功');
             });
         });
         copy.on('wrongflash noflash', function() {
@@ -147,7 +174,8 @@ G.reader = {
 window.onload = function () {
     // todo
     // base64切割输出带进度，保证大图不卡，BUT 切割后无法组装回DataURL，目前无解
-    var imgArea = document.querySelector('.img-area');
+    var request = document.querySelector('.img-area'),
+        response = document.querySelector('.code-list');
 
-    G.drag.init(imgArea);
+    G.drag.init(request, response);
 };
