@@ -77,7 +77,6 @@ G.drag = {
         var w = G.drag;
 
         e.preventDefault();
-        if(e.dataTransfer.files.length > 0){
             w.setAreaStatus(1);
         }
     },
@@ -111,7 +110,7 @@ G.drag = {
         w.setAreaStatus(0);
     },
     setAreaStatus: function (status) {
-        var tipArr = ['将图片拖拽至此', '释放生成DataURL', '处理中...'],
+        var tipArr = ['将图片拖拽至此', '释放生成DataURL', '处理中...', '只接受图片类文件'],
             w = G.drag;
 
         w.req.children[0].innerText = tipArr[status];
