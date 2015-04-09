@@ -77,6 +77,7 @@ G.drag = {
         var w = G.drag;
 
         e.preventDefault();
+        if(e.dataTransfer.types[0] === "Files"){
             w.setAreaStatus(1);
         }
     },
