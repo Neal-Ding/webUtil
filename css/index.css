@@ -62,4 +62,7 @@ h1.title{
 .code-list li img{
     width: 100px;
     height: 100px;
+    font-size: 20px;
+    line-height: 65px;
+    text-align: center;
 }
