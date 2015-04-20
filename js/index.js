@@ -1,83 +1,8 @@
-//全局公用逻辑
-var G = {
-    init: function () {
-        var w = this;
-        w.tipMsg = document.querySelector('.G-tipMsg');
-    },
-    ns: function (str, overWritten) {
-        var arr = str.split("."),
-            w = window;
-
-        for (var i = 0; i < arr.length; i++) {
-            if(w[arr[i]] === undefined || overWritten){
-                w[arr[i]] = {};
-            }
-            else {
-                console.log(JSON.stringify(w[arr[i]]) + " will be overWritten");
-                break;
-            }
-            w = w[arr[i]];
-        }
-    },
-    //兼容模板内容，单节点和多节点
-    //todo
-    //返回元素是否必须用tempDOM中转？参考下handlebars和underscore
-    //返回collection还是nodelist 比较好？目前是collection
-    //目前是根据节点数量返回单一节点或者是collection, 是否有必要？
-    setTemplate: function (input) {
-        var tempDOM = document.createElement('div'),
-            template;
-
-        if(typeof(input) === 'string'){
-            tempDOM.innerHTML = input;
-        }
-        else if(input !== undefined){
-            input = (input.nodeType === 1) ? [input] : Array.prototype.slice.call(input);
-            input.forEach(function (t) {
-                tempDOM.innerHTML += t.innerHTML;
-            });
-        }
-
-        template = (tempDOM.children.length > 1) ? tempDOM.children : tempDOM.children[0];
-        return template;
-    },
-    share: {
-        showPassTip: function (text) {
-            var w = this;
-            w._showTip(text, 0);
-        },
-        showWarnTip: function (text) {
-            var w = this;
-            w._showTip(text, 1);
-        },
-        showErrorTip: function (text) {
-            var w = this;
-            w._showTip(text, 2);
-        },
-        _showTip: function (text, status) {
-            var w = this,
-                tipMsg = w.tipMsg,
-                tipTemplate = '<div class="G-tipMsg"></div>',
-                statusArr = ['pass', 'warn', 'error'];
-
-            if(!tipMsg){
-                tipMsg = G.setTemplate(tipTemplate);
-                document.body.appendChild(tipMsg);
-            }
-            tipMsg.innerText = text || '';
-            DOMTokenList.prototype.remove.apply(tipMsg.classList, statusArr);
-            setTimeout(function () {
-                tipMsg.classList.add(statusArr[status], 'show');
-            }, 0);
-            setTimeout(function () {
-                tipMsg.classList.remove('show');
-            }, 1000);
-        }
-    }
-};
+G.ns('Page.drag');
+G.ns('Page.reader');
 
 //处理拖拽逻辑
-G.drag = {
+Page.drag = {
     init: function (request, response) {
         var w = this;
 
@@ -103,7 +28,7 @@ G.drag = {
         w.src.addEventListener('drop', w.dropHandle, false);
     },
     dragEnterHandle: function (e) {
-        var w = G.drag;
+        var w = Page.drag;
 
         e.preventDefault();
         if(e.dataTransfer.types[0] === "Files"){
@@ -111,7 +36,7 @@ G.drag = {
         }
     },
     dragLeaveHandle: function (e) {
-        var w = G.drag;
+        var w = Page.drag;
 
         e.preventDefault();
         w.setAreaStatus(0);
@@ -119,14 +44,14 @@ G.drag = {
     dropHandle: function (e) {
         var files = Array.prototype.slice.call(e.dataTransfer.files),
             docfrag = document.createDocumentFragment(),
-            w = G.drag;
+            w = Page.drag;
 
         e.preventDefault();
         w.setAreaStatus(2);
         files.forEach(function (t) {
             if(t.type.indexOf('image') != -1){
                 var item = G.setTemplate(w.tpl);
-                G.reader.init(t, item);
+                Page.reader.init(t, item);
                 docfrag.appendChild(item);
             }
         });
@@ -135,14 +60,14 @@ G.drag = {
     },
     setAreaStatus: function (status) {
         var tipArr = ['将图片拖拽至此', '释放生成DataURL', '处理中...', '只接受图片类文件'],
-            w = G.drag;
+            w = Page.drag;
 
         w.tip.innerText = tipArr[status];
     }
 };
 
 //读取数据逻辑
-G.reader = {
+Page.reader = {
     init: function (file, itemNode) {
         var w = this,
             reader = new FileReader();
@@ -165,13 +90,13 @@ G.reader = {
     },
     onloadStart: function () {
         var t = this,
-            w = G.reader;
+            w = Page.reader;
 
         w.setStatus(t.statusNode, t.readyState);
     },
     onload: function () {
         var t = this,
-            w = G.reader;
+            w = Page.reader;
 
         t.imgNode.src = t.result;
         w.setStatus(t.statusNode, t.readyState);
@@ -204,6 +129,7 @@ G.reader = {
 window.onload = function () {
     // todo
     // base64切割输出带进度，保证大图不卡，BUT 切割后无法组装回DataURL，目前无解
+    // 参考API: https://developer.mozilla.org/zh-CN/docs/Web/API/Blob
     var request = {
             source: document.querySelector('.img-area'),
             template: document.querySelectorAll('.code-list-template')
@@ -211,5 +137,5 @@ window.onload = function () {
         response = document.querySelector('.code-list');
 
     G.init();
-    G.drag.init(request, response);
+    Page.drag.init(request, response);
 };
