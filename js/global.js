@@ -14,7 +14,7 @@ var G = {
     },
     ns: function (str, overWritten) {
         var arr = str.split("."),
-        	win = window,
+            win = window,
             w = this;
 
         arr.forEach(function (t) {
@@ -22,7 +22,7 @@ var G = {
                 win[t] = {};
             }
             else if(w.isObject(win[t])){
-            	return true;
+                return true;
             }
             else {
                 console.log(JSON.stringify(win[t]) + " will be overWritten");
@@ -32,7 +32,7 @@ var G = {
         });
     },
     isObject: function (obj) {
-    	return (Object.prototype.toString.call(obj) === '[object Object]') ? true : false;
+        return (Object.prototype.toString.call(obj) === '[object Object]') ? true : false;
     },
     easyObj: function (selector) {
         var obj = (this.jQuery && selector instanceof this.jQuery) ? selector.get() :
