@@ -6,13 +6,6 @@ Page.drag = {
     init: function (request, response) {
         var w = this;
 
-        ZeroClipboard.config({
-            moviePath: 'js/ZeroClipboard.swf',
-            handCursorEnabled: true,
-            hoverClass: 'status-hover',
-            trustedDomains: ['*']
-        });
-
         w.src = request.source;
         w.tip = request.source.children[0];
         w.res = response;
@@ -87,6 +80,8 @@ Page.reader = {
         reader.onloadstart = w.onloadStart;
         reader.onload = w.onload;
         reader.readAsDataURL(w.file);
+
+        w.client = w.clipBoardInit();
     },
     onloadStart: function () {
         var t = this,
@@ -102,17 +97,24 @@ Page.reader = {
         w.setStatus(t.statusNode, t.readyState);
         //todo
         //节点委托
-        w.setClipBoard(t.copyNode);
+        w.client.clip(t.copyNode);
     },
     setStatus: function (node, status) {
         if(status == 2){
             node.style.height = 0;
         }
     },
-    setClipBoard: function (btn) {
-        var copy = new ZeroClipboard(btn);
+    clipBoardInit: function () {
+        ZeroClipboard.config({
+            moviePath: 'js/ZeroClipboard.swf',
+            handCursorEnabled: true,
+            hoverClass: 'status-hover',
+            trustedDomains: ['*']
+        });
 
-        copy.on('load', function(client) {
+        var client = new ZeroClipboard();
+
+        client.on('load', function(client) {
             client.on('datarequested', function(client) {
                 client.setText(this.previousElementSibling.src);
             });
@@ -120,9 +122,12 @@ Page.reader = {
                 G.share.showPassTip('复制成功');
             });
         });
-        copy.on('wrongflash noflash', function() {
+
+        client.on('wrongflash noflash', function() {
             ZeroClipboard.destroy();
         });
+
+        return client;
     }
 };
 
