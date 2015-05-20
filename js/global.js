@@ -12,23 +12,28 @@ var G = {
         w.tipMsg = w.setTemplate(tipTemplate);
         document.body.appendChild(w.tipMsg);
     },
-    ns: function (str, overWritten) {
+    ns: function (str, obj, overWritten) {
         var arr = str.split("."),
             win = window,
             w = this;
 
-        arr.forEach(function (t) {
+        arr.forEach(function (t, idx) {
             if(win[t] === undefined || overWritten){
-                win[t] = {};
+                if(idx == arr.length - 1){
+                    win[t] = obj;
+                } else{
+                    win[t] = {};
+                }
+                win = win[t];
             }
             else if(w.isObject(win[t])){
+                win = win[t];
                 return true;
             }
             else {
                 console.log(JSON.stringify(win[t]) + " will be overWritten");
                 return false;
             }
-            win = win[t];
         });
     },
     isObject: function (obj) {
