@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>webSocketTest</title>
+</head>
+<body>
+	<div>This is receiver.</div>
+	<script>
+	addEventListener('message', function (event) {
+		// console.log(event.data);
+		var data = event.data,
+			origin = event.origin;
+
+		var msgData = document.createElement('p');
+		msgData.innerHTML = 'data: ' + data + ', origin: ' + origin;
+		document.body.appendChild(msgData);
+	}, false);
+	</script>
+</body>
+</html>
