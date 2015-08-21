@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>fontSizeAdjust</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	div{
+		font-size: 20px;
+	}
+	</style>
+</head>
+<body>
+	<div style='width: 20px;'>
+		test文本内容test
+	</div>
+	<div style='width: 50px;'>
+		test文本内容test
+	</div>
+	<div style='width: 100px;'>
+		test文本内容test
+	</div>
+	<div style='width: 130px;'>
+		test文本内容test
+	</div>
+	<div style='width: 140px;'>
+		test文本内容test
+	</div>
+	<script>
+	var app = {
+		createCSS: function (styleName, styleData) {
+			var styleTag = document.createElement('style'),
+				styleType = '.',
+				styleDataHash = {
+					'\'': '',
+					'\"': '',
+					',': ';'
+				}, styleDataRE;
+
+			if (styleName.charAt(0) == '#' || styleName.charAt(0) == '.') {
+				styleType = styleName.charAt(0);
+				styleName.slice(0, 1);
+			}
+
+			styleDataRE = new RegExp ('[' + Object.keys(styleDataHash).join('|') + ']', 'gi');
+			styleData = JSON.stringify(styleData).replace(styleDataRE, function (word) {
+				if (styleDataHash[word] !== undefined) {
+					return styleDataHash[word];
+				}
+			});
+			document.head.appendChild(styleTag);
+			styleTag.sheet.insertRule(styleType + styleName + styleData, 0);
+		},
+		calcFontSize: function (DOM, curWidth, targetWidth) {
+			var	w = this,
+				minWidth = 12,
+				curFontSize = parseInt(getComputedStyle(DOM, null).fontSize, 0);
+
+			if (parseInt(curWidth, 0) <= parseInt(targetWidth) || curFontSize <= minWidth) {
+				return ;
+			} else {
+				DOM.style.fontSize = (curFontSize - 1) + 'px';
+				curWidth = getComputedStyle(DOM, null).width;
+				w.calcFontSize(DOM, curWidth, targetWidth);
+			}
+		},
+		fontSizeAdjust: function (DOM, oneLine) {
+			var realWidthStyle = {
+					"width": "auto !important",
+					"white-space": "nowrap !important",
+					"display": "inline-block !important"
+				},
+				w = this,
+				tempClassName = '__temp-real-width',
+				targetWidth, curWidth;
+
+			w.createCSS(tempClassName, realWidthStyle);
+			for (var i = 0; i < DOM.length; i++) {
+				targetWidth = getComputedStyle(DOM[i], null).width;
+				DOM[i].classList.add(tempClassName);
+				curWidth = getComputedStyle(DOM[i], null).width;
+				w.calcFontSize(DOM[i], curWidth, targetWidth, oneLine);
+				DOM[i].classList.remove(tempClassName);
+			}
+		}
+	};
+
+	app.fontSizeAdjust(document.getElementsByTagName('div'));
+	</script>
+</body>
+</html>
