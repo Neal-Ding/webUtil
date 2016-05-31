@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>Carousel</title>
+    <style>
+    /*base style*/
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    fieldset,
+    img {
+        border: none;
+    }
+
+    ul li,
+    ol li {
+        list-style: none;
+    }
+
+    i {
+        font-style: normal;
+    }
+    </style>
+    <style>
+    .container {
+        position: absolute;
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+    }
+
+    .container .inner-container {
+        transition: transform 0.8s cubic-bezier(1, 0, 0, 1);
+        transform: translate(0, 0);
+    }
+
+    .container .ch {
+        width: 100%;
+        height: 500px;
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="inner-container">
+            <div class="ch ch1">
+                <span>Chapter 1</span>
+            </div>
+            <div class="ch ch2">
+                <span>Chapter 2</span>
+            </div>
+            <div class="ch ch3">
+                <span>Chapter 3</span>
+            </div>
+            <div class="ch ch4">
+                <span>Chapter 4</span>
+            </div>
+        </div>
+    </div>
+    <script>
+    //仅纵向先
+
+    (function() {
+        var app = {};
+        var container = document.querySelector('.container');
+        var inner = container.querySelector('.inner-container');
+        var maxPageNum = inner.querySelectorAll('div').length;
+        var config = {
+            curPoint: {},
+            curPageNum: 0,
+            scope: 50,
+            pageSize: 500,
+            isTransitionDone: true
+        };
+
+        function overTop() {
+            console.log('Here is the TOP!');
+        }
+
+        function overBottom() {
+            console.log('Here is the Bottom!');
+        }
+
+        function resetPoint(touchX, touchY) {
+            config.curPoint = {
+                X: touchX,
+                Y: touchY,
+                toPrev: {
+                    X: touchX,
+                    Y: touchY + config.scope
+                },
+                toNext: {
+                    X: touchX,
+                    Y: touchY - config.scope
+                }
+            };
+        }
+
+        function toPage(pageNum) {
+            if (pageNum < 0) {
+                overTop();
+                config.curPageNum = 0;
+                console.log(pageNum);
+            } else if (pageNum >= maxPageNum) {
+                overBottom();
+                config.curPageNum = maxPageNum - 1;
+                console.log(pageNum);
+            } else {
+                inner.style.webkitTransform = 'translate(0, -' + pageNum * config.pageSize + 'px)';
+                config.curPageNum = pageNum;
+                config.isTransitionDone = false;
+            }
+        }
+
+        function touchStartHandle(e) {
+            var touchX = e.touches[0].pageX,
+                touchY = e.touches[0].pageY;
+
+            resetPoint(touchX, touchY);
+
+            console.log('start', touchX, touchY);
+        }
+
+        function touchMoveHandle(e) {
+            var touchX = e.touches[0].pageX,
+                touchY = e.touches[0].pageY;
+
+            console.log('move', touchX, touchY);
+
+            if (config.isTransitionDone == true) {
+                if (touchY > config.curPoint.toPrev.Y) { //Prev
+                    toPage(config.curPageNum - 1, touchX, touchY);
+                } else if (touchY < config.curPoint.toNext.Y) { //Next
+                    toPage(config.curPageNum + 1, touchX, touchY);
+                }
+                resetPoint(touchX, touchY);
+            }
+        }
+
+        function touchEndHandle(e) {
+            console.log('end');
+        }
+
+        function transitionEndHandle() { //状态锁
+            console.log('transition End');
+            config.isTransitionDone = true;
+        }
+
+        function wheelHandle(e) {
+            console.log('wheel', e.deltaY);
+            e.preventDefault();
+            console.log(config.isTransitionDone)
+            if (config.isTransitionDone == true) {
+                if (e.deltaY < -config.scope) {
+                    toPage(--config.curPageNum);
+                } else if (e.deltaY > config.scope) {
+                    toPage(++config.curPageNum);
+                }
+                    console.log(config.curPageNum)
+            }
+        }
+
+        container.addEventListener('touchstart', touchStartHandle, false);
+        container.addEventListener('touchmove', touchMoveHandle, false);
+        container.addEventListener('touchend', touchEndHandle, false);
+        container.addEventListener('transitionend', transitionEndHandle, false);
+        container.addEventListener('wheel', wheelHandle, false);
+    })();
+    </script>
+</body>
+
+</html>

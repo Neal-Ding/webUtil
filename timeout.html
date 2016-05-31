@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Timeout SlowDown</title>
+</head>
+<body>
+	<script>
+	function timeMon (limitTime, timeOutFn, timeInFn) {
+		this.limitTime = limitTime;
+		this.timeOutFn = timeOutFn;
+		this.timer = null;
+	}
+	timeMon.prototype.startMon = function() {
+		var t = this,
+			minTime = 0.1;
+
+		this.counter = minTime;
+		this.timer = setInterval(function () {
+			t.counter += minTime;
+			console.log(t.counter);
+		}, 1000 * minTime);
+	};
+	timeMon.prototype.stopMon = function() {
+		var isTimeout;
+
+		clearInterval(this.timer);
+		if (this.counter > this.limitTime) {
+			this.timeOutFn && this.timeOutFn(this.counter);
+			isTimeout = true;
+		} else {
+			this.timeInFn && this.timeInFn(this.counter);
+			console.log('During ' + this.counter + ' s');
+			isTimeout = false;
+		}
+		return isTimeout;
+	};
+
+	function work () {
+		var t = new timeMon(4, work);
+		t.startMon();
+		console.log('start');
+		setTimeout(function () {
+			t.stopMon();
+			console.log('done');
+		}, 4000);
+	}
+	</script>
+</body>
+</html>

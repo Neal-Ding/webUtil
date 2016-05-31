@@ -45,7 +45,6 @@ function _makeRoll (obj, num) {
 	//两面体转动会频闪，要加入背向隐藏，Math.tan并不存在，要手动指定
 	if(num === 2){
 		obj.className += "piece";
-		obj.r = 0;
 	}
 	//组成多边形闭环
 	for (var i = 0; i < num; i++) {
@@ -93,6 +92,6 @@ function roll3D (obj, num, showSec, rollSec, direction) {
 	<div id="container"></div>
 </body>
 <script>
-	roll3D(document.getElementById('container'), 6, 1, 1, true);
+	roll3D(document.getElementById('container'), 2, 1, 1, true);
 </script>
 </html>

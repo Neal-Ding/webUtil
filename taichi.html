@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>taichi</title>
+	<style>
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	body{
+		background-color: #eee;
+	}
+	.icon-taichi{
+		width: 50px;
+		height: 50px;
+		overflow: hidden;
+		border: 2px solid #000;
+		border-radius: 50%;
+		-webkit-animation: loading 4s linear normal forwards infinite;
+		animation: loading 4s linear normal forwards infinite;
+	}
+	@-webkit-keyframes loading{
+		0% {
+			-webkit-transform: rotateZ(0deg);
+			transform: rotateZ(0deg);
+		}
+		100% {
+			-webkit-transform: rotateZ(360deg);
+			transform: rotateZ(360deg);
+		}
+	}
+	.icon-taichi-l, .icon-taichi-r{
+		float: left;
+		position: relative;
+		width: 50%;
+		height: 100%;
+	}
+	.icon-taichi-l, .icon-taichi-l:before, .icon-taichi-r:after{
+		background-color: #fff;
+	}
+	.icon-taichi-r, .icon-taichi-r:before, .icon-taichi-l:after{
+		background-color: #000;
+	}
+	.icon-taichi-l:before, .icon-taichi-r:before, .icon-taichi-l:after, .icon-taichi-r:after{
+		content: "";
+		display: block;
+		position: absolute;
+		width: 100%;
+		height: 50%;
+		z-index: 10;
+		border-radius: 50%;
+	}
+	.icon-taichi-l:before{
+		top: 0;
+		right: -50%;
+	}
+	.icon-taichi-r:before{
+		bottom: 0;
+		left: -50%;
+	}
+	.icon-taichi-l:after, .icon-taichi-r:after{
+		width: 33.3333333333%;
+		padding-top: 33.3333333333%;
+		height: 0;
+		z-index: 20;
+	}
+	.icon-taichi-l:after{
+		top: 16.6666666666%;
+		right: -16.66666666%;
+	}
+	.icon-taichi-r:after{
+		bottom: 16.6%;
+		left: -16.6%;
+	}
+	</style>
+</head>
+<body>
+	<div class="icon-taichi">
+		<div class="icon-taichi-l"></div>
+		<div class="icon-taichi-r"></div>
+	</div>
+</body>
+</html>

